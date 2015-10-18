@@ -10,30 +10,26 @@ import javax.sql.DataSource;
  * @author Shruthi Routhu
  */
 public interface DBStrategy {
-    
-   // Exception will be handled where the notifications are needed. Do validation too
-    
+       
     void openConnection(String driverClass, String url, String userName, String password) throws Exception;
     
     void openConnection(DataSource ds) throws Exception;
     
-    List<Map<String, Object>> findAllRecords(String tableName) throws SQLException;
+    List<Map<String, Object>> findAllRecords(String tableName) throws SQLException,Exception;
     
-    List<Map<String,Object>> findRecordsByCondition(String tableName, String condColName, Object condColVal)throws SQLException ;
+    List<Map<String,Object>> findRecordsByCondition(String tableName, String condColName, Object condColVal)throws SQLException, Exception ;
 
-    Map<String,Object> findRecordByID(String tableName, String pkName, Object pkVal)throws SQLException ;
+    Map<String,Object> findRecordByPK(String tableName, String pkName, Object pkVal)throws SQLException ,Exception ;
+       
+    int emptyTable(String tableName) throws SQLException ,Exception;
     
-    Map<String,Object> findRecordByID(String tableName, List<String> keyList ,List<Object> valueList)throws SQLException ;
+    int deleteRecordByPK(String tableName,String pkName ,Object pkValue ) throws SQLException ,Exception;
     
-    int emptyTable(String tableName) throws SQLException;
-    
-    int deleteRecordByID(String tableName,String pkName ,Object pkValue ) throws SQLException;
-    
-    int deleteRecordByID(String tableName, List<String> keyList ,List<Object> valueList ) throws SQLException;
+    int deleteRecordByComplexPK(String tableName, List<String> keyList ,List<Object> valueList ) throws SQLException, Exception;
     
     int updateRecord(String tableName, String conditionColName , Object conditionColValue,
-            List<String> keyList ,List<Object> valueList) throws SQLException;
+            List<String> keyList ,List<Object> valueList) throws SQLException ,Exception;
     
-    int insertRecord(String tableName,List<String> colNameList ,List<Object> colValueList) throws SQLException;
+    int insertRecord(String tableName,List<String> colNameList ,List<Object> colValueList) throws SQLException ,Exception;
     
 }
