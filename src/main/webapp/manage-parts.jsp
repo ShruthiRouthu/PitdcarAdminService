@@ -16,15 +16,17 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     </head>
     <body>
-               
+        
+        <p style="text-align:right; margin:25px 25px 0px 25px"> ${user_name} </p>
         <h1 style="text-align:center">Manage Parts</h1>
         
+        <a href="PartController?action=showHomePage" style="margin-bottom: 25px; margin-left:5px">Home</a>
         <div class="table-responsive" style="margin: 25px">
         <table class="table table-striped table-bordered">
             
             <tr style="background-color: #1E90FF; color:FFFFF0;">               
                 <th align="left" >ID</th>
-                <th align="right" >EffDate</th>
+                
                 <th align="left" >Name</th>
                 <th align="left" >Description</th>
                 <th align="left" >Manufaturer</th>
@@ -45,9 +47,7 @@
                         </c:otherwise>
                     </c:choose>          
                                 <td align="left">${p.part_id}</td>
-                                <td align="right">
-                                    <fmt:formatDate pattern="M/d/yyyy" value="${p.eff_date}"></fmt:formatDate>
-                                </td>
+                                
                                 <td align="left">${p.part_name}</td>
                                 <td align="left">${p.part_description}</td>
                                 <td align="left">${p.manufacturer}</td>
@@ -82,17 +82,14 @@
     <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form id="addForm" name="addForm" method="POST" action="PartController?action=add">  
+          <form id="addForm" name="addForm" method="POST" action="PartController?action=add" class="form-horizontal">  
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title" id="myModalLabel">Add Part</h4>
           </div>
             <div class="modal-body">
                 
-                   <div class="form-group">
-                    <label for="eff_date">Effective Date:  </label>
-                    <input  class="form-control" id="eff_date" name="eff_date" type="text" value="" required>
-                   </div> 
+                   
                                                                
                    <div class="form-group">
                     <label for="part_name">Name:  </label>
@@ -111,7 +108,7 @@
                 
                    <div class="form-group">
                     <label for="part_image">Image URL:  </label>
-                    <input  class="form-control" id="part_image" name="part_image" type="url" value="" required >
+                    <input  class="form-control" id="part_image" name="part_image" type="text" value="" required >
                    </div>
                 
                    <div class="form-group">
@@ -136,7 +133,8 @@
       </div>
     </div>    
         
-        
+       
+        <p style="text-align:center; margin:30px; color:red"> ${admin_message}<p>
         
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">  </script>

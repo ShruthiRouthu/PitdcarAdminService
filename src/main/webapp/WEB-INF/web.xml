@@ -9,7 +9,7 @@
         <servlet-name>PartController</servlet-name>
         <servlet-class>edu.wctc.srt.pitdcaradminservice.controller.PartController</servlet-class>
         <init-param>
-            <param-name>authorDAO</param-name>
+            <param-name>partDAO</param-name>
             <param-value>edu.wctc.srt.pitdcaradminservice.model.PartDAOUsingConnectionPool</param-value>
         </init-param>
         <init-param>

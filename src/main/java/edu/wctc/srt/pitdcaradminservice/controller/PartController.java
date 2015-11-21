@@ -5,20 +5,28 @@ import edu.wctc.srt.pitdcaradminservice.model.DBStrategy;
 import edu.wctc.srt.pitdcaradminservice.model.MySqlDbStrategy;
 import edu.wctc.srt.pitdcaradminservice.model.Part;
 import edu.wctc.srt.pitdcaradminservice.model.PartDAO;
+import edu.wctc.srt.pitdcaradminservice.model.PartDAOStrategy;
+import edu.wctc.srt.pitdcaradminservice.model.PartDAOUsingConnectionPool;
 import edu.wctc.srt.pitdcaradminservice.model.PartService;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 /**
  *
@@ -38,12 +46,25 @@ public class PartController extends HttpServlet {
     private static final String PARAM_MANUFACTURER="manufacturer";
     private static final String PARAM_PART_IMAGE="part_image";
     private static final String PARAM_SALE_PRICE = "salePrice";
-    private static final String PARAM_QTY = "qty";      
-                                       
+    private static final String PARAM_QTY = "qty";  
+    private static final String PARAM_USER_NAME = "user_name";
+    private static final String PARAM_ADMIN_MESSAGE = "admin_message" ; 
+    
+    private static final String IP_PART_DAO = "partDAO";
+    private static final String IP_DB_STRATEGY = "dbStrategy";
+    private static final String IP_DRIVER_CLASS = "driverClass";
+    private static final String IP_USER_NAME  = "userName";      
+    private static final String IP_PASSWORD ="password";
+    private static final String IP_URL = "url";        
+    
+    //JNDI NAME
+    private static final String JNDI_NAME= "jdbc/pitdcar";     
+            
     // ACTION constants
     private static final String ACTION_LIST_PAGE = "showListPage";
     private static final String ACTION_MANAGE_PAGE = "showManagePage";
     private static final String ACTION_EDIT_PAGE = "showEditPage";
+    private static final String ACTION_HOME_PAGE = "showHomePage";
     private static final String ACTION_EDIT = "edit";
     private static final String ACTION_DELETE="delete";
     private static final String ACTION_ADD="add";
@@ -53,17 +74,23 @@ public class PartController extends HttpServlet {
     private static final String PAGE_MANAGE = "/manage-parts.jsp";
     private static final String PAGE_HOME = "/index.jsp";
     private static final String PAGE_EDIT = "/edit-part.jsp";
+    private static final String PAGE_ERROR = "/error-page.jsp";
             
     // ATTRIBUTE constants
     private static final String ATTRIBUTE_PARTS = "parts" ;
     private static final String ATTRIBUTE_SELECTED_PART = "selectedPart";
     
-    // do something with these they are not supposed to be here , things declared here are global
-    DBStrategy db = new  MySqlDbStrategy();
-    PartDAO dao = new PartDAO(db,"com.mysql.jdbc.Driver","jdbc:mysql://localhost:3306/pitdcar","root","DJ2015");
-    private PartService partService = new PartService(dao);
+    // Variables to hold data from xml
+    private String partDAOStrategyClassName ;
+    private String dbStrategyClassName ;
+    private String driverClass ;
+    private String url;
+    private String user ;
+    private String password ;
     
-   
+    private DBStrategy dbStrategy ;
+    private PartDAOStrategy partDAOStrategy;
+    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -77,16 +104,34 @@ public class PartController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
+       
+        HttpSession session = request.getSession();
+        ServletContext context = request.getServletContext();
+      
         String destination = "";
         int part_id;
-        String action = request.getParameter(PARAM_ACTION);
         
-       
+        String action = request.getParameter(PARAM_ACTION);
+        String user_name = request.getParameter(PARAM_USER_NAME);
+        String admin_message = request.getParameter(PARAM_ADMIN_MESSAGE);
+        
+        if((user_name != null) && (user_name.length() > 0 )){
+            session.setAttribute(PARAM_USER_NAME,user_name);
+        }
+        if((admin_message != null) && (admin_message.length() > 0)){
+            context.setAttribute(PARAM_ADMIN_MESSAGE,admin_message);
+        }
         
         try{
-            
+            PartService partService = null;
+            partService = getPartService();
+        
             switch(action){
+                case ACTION_HOME_PAGE :
+                   
+                    destination = PAGE_HOME;
+                    break;
+                    
                 case ACTION_LIST_PAGE : 
                     resetPartList(request,partService);
                     destination = PAGE_LIST;
@@ -114,18 +159,16 @@ public class PartController extends HttpServlet {
                     break;    
                 
                 case ACTION_EDIT : 
+                case ACTION_ADD :    
                     part_id = getParameterPart_id(request);
+                
+                 //   String temp
+                    String salePrice  = request.getParameter(PARAM_SALE_PRICE);
+                 //   double salePrice = Double.parseDouble(temp);
                     
-                    String temp = request.getParameter(PARAM_EFF_DATE);
-                    String pattern = "yyyy-MM-dd";
-                    SimpleDateFormat format = new SimpleDateFormat(pattern);
-                    Date eff_date = format.parse(temp);
-                    
-                    temp = request.getParameter(PARAM_SALE_PRICE);
-                    double salePrice = Double.parseDouble(temp);
-                    
-                    temp = request.getParameter(PARAM_QTY);
-                    int qty = Integer.parseInt(temp);
+                  //  temp
+                    String qty  = request.getParameter(PARAM_QTY);
+                  //  int qty = Integer.parseInt(temp);
                     
                     String part_name  = request.getParameter(PARAM_PART_NAME);
                     String part_description = request.getParameter(PARAM_PART_DESCRIPTION);
@@ -133,7 +176,7 @@ public class PartController extends HttpServlet {
                     String part_image = request.getParameter(PARAM_PART_IMAGE);
                                            
                     List<String> key = new ArrayList();
-                    key.add(PARAM_EFF_DATE);
+                    
                     key.add(PARAM_PART_NAME);
                     key.add(PARAM_PART_DESCRIPTION);
                     key.add(PARAM_MANUFACTURER);
@@ -142,7 +185,7 @@ public class PartController extends HttpServlet {
                     key.add(PARAM_QTY);        
 
                     List<Object> value = new ArrayList();
-                    value.add(eff_date);
+                    
                     value.add(part_name);
                     value.add(part_description);
                     value.add(manufacturer);
@@ -150,67 +193,79 @@ public class PartController extends HttpServlet {
                     value.add(salePrice);
                     value.add(qty);
                     
-                    partService.updatePart(part_id, key, value);
+                    // Logic to decide between INSERT or UPDATE
+                    if(part_id == -1){ 
+                       partService.insertPart(key, value);
+                    }
+                    else{
+                       partService.updatePart(part_id, key, value); 
+                    }
+                    
                     resetPartList(request,partService);
                     destination = PAGE_MANAGE;
                     break;
                 
-                case ACTION_ADD :
-//                    part_id = getParameterPart_id(request);
-                    
-                    temp = request.getParameter(PARAM_EFF_DATE);
-                    pattern = "yyyy-MMdd";
-                    format = new SimpleDateFormat(pattern);
-                    eff_date = format.parse(temp);
-                    
-                    temp = request.getParameter(PARAM_SALE_PRICE);
-                    salePrice = Double.parseDouble(temp);
-                    
-                    temp = request.getParameter(PARAM_QTY);
-                    qty = Integer.parseInt(temp);
-                    
-                    part_name  = request.getParameter(PARAM_PART_NAME);
-                    part_description = request.getParameter(PARAM_PART_DESCRIPTION);
-                    manufacturer = request.getParameter(PARAM_MANUFACTURER);
-                    part_image = request.getParameter(PARAM_PART_IMAGE);
-                                           
-                    key = new ArrayList();
-                    key.clear();
-                    key.add(PARAM_EFF_DATE);
-                    key.add(PARAM_PART_NAME);
-                    key.add(PARAM_PART_DESCRIPTION);
-                    key.add(PARAM_MANUFACTURER);
-                    key.add(PARAM_PART_IMAGE);
-                    key.add(PARAM_SALE_PRICE);
-                    key.add(PARAM_QTY);        
-
-                    value = new ArrayList();
-                    value.clear();
-                    value.add(eff_date);
-                    value.add(part_name);
-                    value.add(part_description);
-                    value.add(manufacturer);
-                    value.add(part_image);
-                    value.add(salePrice);
-                    value.add(qty);
-                    
-                    partService.insertPart(key, value);
-                    resetPartList(request,partService);
-                    destination = PAGE_MANAGE;
-                    break;  
-                    
-                default:
             }
             
-        }catch(Exception e){ System.out.println(e.getMessage());}
-                                
+        }catch(Exception e){
+               destination = PAGE_ERROR ; 
+               System.out.println(e.getMessage());
+        }
+        finally{    
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(destination);
+            dispatcher.forward(request, response);
+        }
         
+    }
+    
+    private PartService getPartService() throws Exception {
+    
+            PartService partService = null;
+         
+            // getting  dbstrategy class as String
+            Class dbClassName = Class.forName(dbStrategyClassName) ;
+            dbStrategy = (DBStrategy)dbClassName.newInstance();   
+            
+            // getting daoStrategy class name as String
+            Class daoClassName = Class.forName(partDAOStrategyClassName);
+            
+            // getting the Constructor for partDaoStrategy
+            Constructor constructor = null ;
+            
+            try{
+                constructor = daoClassName.getConstructor(new Class[] {DBStrategy.class, String.class,
+                        String.class ,String.class, String.class}); 
+            } catch (NoSuchMethodException e) {}            
+            
+            // if constructor is found use that constructor with data injected through xml
+            if(constructor != null){
+//                
+//                Object[] constructorArgs = new Object[] {dbStrategy, driverClass, url, user, password};
+//                partDAOStrategy = (PartDAOStrategy)constructor.newInstance(constructorArgs);  
+//                partService =  new PartService(partDAOStrategy);
+            }
+            else{  
+                // Implies that PartDAOStrategyUsingConnectionPool was injected from web.xml , 
+                // so use connection pooling
+                Context context = new InitialContext();
+                DataSource dataSource = (DataSource) context.lookup(JNDI_NAME);
+                constructor = null ;
+                
+                try{
+                    
+                    constructor = daoClassName.getConstructor(new Class[] {DBStrategy.class, DataSource.class  });
+                    Object[] constructorArgs = new Object[] {dbStrategy, dataSource}; 
+                    partDAOStrategy = (PartDAOStrategy)constructor.newInstance(constructorArgs);  
+                    partService =  new PartService(partDAOStrategy);
+                    
+                } catch (NoSuchMethodException e) { 
+                    throw e ;
+                }  
+            }   
+       
         
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(destination);
-        dispatcher.forward(request, response);
-        
-        
- 
+        return partService;
+       
     }
     
     private int getParameterPart_id(HttpServletRequest request){
@@ -227,6 +282,18 @@ public class PartController extends HttpServlet {
         request.setAttribute(ATTRIBUTE_PARTS ,parts);
     } 
 
+    @Override
+    public void init() throws ServletException {
+        
+        partDAOStrategyClassName = getServletConfig().getInitParameter(IP_PART_DAO);
+        dbStrategyClassName = getServletConfig().getInitParameter(IP_DB_STRATEGY);
+        driverClass = getServletConfig().getInitParameter(IP_DRIVER_CLASS);
+        url = getServletConfig().getInitParameter(IP_URL);
+        user  = getServletConfig().getInitParameter(IP_USER_NAME); 
+        password = getServletConfig().getInitParameter(IP_PASSWORD); 
+        
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -265,5 +332,7 @@ public class PartController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+    
+    
 
 }

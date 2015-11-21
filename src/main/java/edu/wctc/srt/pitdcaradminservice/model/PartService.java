@@ -46,17 +46,17 @@ public class PartService {
     }
     
 // UNIT TESTING
-    public static void main(String[] args) throws Exception{
-                
-        DBStrategy db = new  MySqlDbStrategy();
-        PartDAO dao = new PartDAO(db,"com.mysql.jdbc.Driver","jdbc:mysql://localhost:3306/pitdcar","root","DJ2015");
-        PartService ps = new PartService(dao);
-//        
-// ALL PARTS
-        List<Part> list = ps.findAllParts();
-        for(Part a : list) {
-            System.out.println(a);
-        }
+//    public static void main(String[] args) throws Exception{
+//                
+//        DBStrategy db = new  MySqlDbStrategy();
+//        PartDAO dao = new PartDAO(db,"com.mysql.jdbc.Driver","jdbc:mysql://localhost:3306/pitdcar","root","DJ2015");
+//        PartService ps = new PartService(dao);
+////        
+//// ALL PARTS
+//        List<Part> list = ps.findAllParts();
+//        for(Part a : list) {
+//            System.out.println(a);
+//        }
         
 // PARTS BY SOME CONDITION
 //        List<Part> list = ps.findPartsByCondition("manufacturer","Beck Arnley ");
@@ -113,6 +113,6 @@ public class PartService {
       
       
       
-    }
+//    }
     
 }

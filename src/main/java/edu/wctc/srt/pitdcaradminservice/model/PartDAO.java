@@ -29,8 +29,8 @@ public class PartDAO implements PartDAOStrategy{
     private String url;
     private String userName;
     private String password;
-//    private String datePattern = "yyyy/MM/dd";
-//    private SimpleDateFormat formatter = new SimpleDateFormat(datePattern);
+    private String datePattern = "yyyy/MM/dd";
+    private SimpleDateFormat formatter = new SimpleDateFormat(datePattern);
     
     //CONSTRUCTOR
     public PartDAO(DBStrategy dbStrat, String driverClassName, String url, String userName, String password) {
@@ -55,8 +55,7 @@ public class PartDAO implements PartDAOStrategy{
             Object obj = (m.get(PART_ID) == null)? "" : m.get(PART_ID);
             part.setPart_id(Integer.parseInt(obj.toString()));            
             
-            obj = (m.get(EFF_DATE) == null)? "" : m.get(EFF_DATE);
-            part.setEff_date((Date)obj);
+
             
             obj = (m.get(PART_NAME)== null)? "" : m.get(PART_NAME);
             part.setPart_name(obj.toString());
@@ -95,8 +94,7 @@ public class PartDAO implements PartDAOStrategy{
             Object obj = (m.get(PART_ID) == null)? "" : m.get(PART_ID);
             part.setPart_id(Integer.parseInt(obj.toString()));            
             
-            obj = (m.get(EFF_DATE) == null)? "" : m.get(EFF_DATE);
-            part.setEff_date((Date)obj);
+
                         
             obj = (m.get(PART_NAME)== null)? "" : m.get(PART_NAME);
             part.setPart_name(obj.toString());
@@ -135,8 +133,6 @@ public class PartDAO implements PartDAOStrategy{
             Object obj = (rawData.get(PART_ID) == null)? "" : rawData.get(PART_ID);
             part.setPart_id(Integer.parseInt(obj.toString()));            
             
-            obj = (rawData.get(EFF_DATE) == null)? "" : rawData.get(EFF_DATE);
-            part.setEff_date((Date)obj);
                         
             obj = (rawData.get(PART_NAME)== null)? "" : rawData.get(PART_NAME);
             part.setPart_name(obj.toString());
@@ -192,12 +188,12 @@ public class PartDAO implements PartDAOStrategy{
     }
     
     // UNIT TESTING
-    public static void main(String[] args) throws Exception{
-                
+//    public static void main(String[] args) throws Exception{
+//                
 //        DBStrategy db = new  MySqlDbStrategy();
 //        PartDAO dao = new PartDAO(db,"com.mysql.jdbc.Driver","jdbc:mysql://localhost:3306/pitdcar","root","DJ2015");
-//        
-// ALL PARTS
+////        
+////ALL PARTS
 //        List<Part> list = dao.findAllParts();
 //        for(Part a : list) {
 //            System.out.println(a);
@@ -258,6 +254,6 @@ public class PartDAO implements PartDAOStrategy{
       
       
       
-    }
+//    }
     
 }

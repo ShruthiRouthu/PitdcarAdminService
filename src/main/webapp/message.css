@@ -1,0 +1,35 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Oct 19, 2015, 10:14:08 PM
+    Author     : Shruthi Routhu 
+*/
+
+ 
+h3 {
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    -webkit-animation-name: example; /* Chrome, Safari, Opera */
+    -webkit-animation-duration: 4s; /* Chrome, Safari, Opera */
+    animation-name: example;
+    animation-duration: 4s;
+}
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes example {
+    from {background-color: red;}
+    to {background-color: yellow;}
+}
+
+/* Standard syntax */
+@keyframes example {
+    from {background-color: red;}
+    to {background-color: yellow;}
+}
+
+
+

@@ -16,14 +16,17 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     </head>
     <body>
+        
+        <p style="text-align:right; margin:25px 25px 0px 25px"> ${user_name} </p>
         <h1 style="text-align:center">Edit Part</h1>
         
-        
-        <form id="editForm" name="editForm" method="POST" action="PartController?action=edit" style="margin: 25px">
+        <a href="PartController?action=showHomePage" style="margin-bottom: 25px; margin-left:5px">Home</a>
+        <form id="editForm" name="editForm" method="POST" action="PartController?action=edit" style="margin: 25px" class="form-horizontal">
             
          
            <c:set var="part" scope="page" value="${selectedPart}"/> 
-           <c:set var="eff_date" scope="page" value="<%<fmt:formatDate pattern='yyyy-MM-dd' value='${part.eff_date}'%>" />
+           
+          
            
            <input type="hidden" name="partID" id="partID" value="${selectedPart.part_id}" >
 
@@ -32,10 +35,7 @@
             <input  class="form-control" id="part_name" name="part_name" type="text" value="${selectedPart.part_name}" required>
            </div>
 
-          <div class="form-group">
-            <label for="eff_date"> Effective Date :  </label>
-            <input  class="form-control" id="eff_date" name="eff_date" type="text" value="${selectedPart.eff_date}" required>
-          </div>
+          
 
            <div class="form-group">
             <label for="part_description">Description:  </label>
@@ -69,7 +69,7 @@
         
         </form>
         
-        
+         <p style="text-align:center; margin:30px; color:red"> ${admin_message}<p>
         
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">  </script>

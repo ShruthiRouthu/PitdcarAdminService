@@ -38,83 +38,94 @@ public class Part {
         this.salePrice = salePrice;
         this.qty = qty;
     }
-
-    //SETTERS
-    public void setPart_name(String part_name) {
+    
+    public Part(int part_id, String part_name, String part_description, String manufacturer, String part_image, double salePrice, int qty) {
+        this.part_id = part_id;
+        this.eff_date = eff_date;
         this.part_name = part_name;
-    }
-
-    public void setPart_description(String part_description) {
         this.part_description = part_description;
-    }
-
-    public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
-    }
-
-    public void setPart_image(String part_image) {
         this.part_image = part_image;
-    }
-
-    public void setSalePrice(double salePrice) {
         this.salePrice = salePrice;
-    }
-
-    public void setQty(int qty) {
         this.qty = qty;
     }
 
-    public void setPart_id(int part_id) {
+    //SETTERS
+    public final void setPart_name(String part_name) {
+        this.part_name = part_name;
+    }
+
+    public final void setPart_description(String part_description) {
+        this.part_description = part_description;
+    }
+
+    public final void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public final void setPart_image(String part_image) {
+        this.part_image = part_image;
+    }
+
+    public final void setSalePrice(double salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    public final void setQty(int qty) {
+        this.qty = qty;
+    }
+
+    public  final void setPart_id(int part_id) {
         this.part_id = part_id;
     }
 
-    public void setEff_date(Date eff_date) {
+    public final void setEff_date(Date eff_date) {
         this.eff_date = eff_date;
     }
     
     //GETTERS
 
-    public int getPart_id() {
+    public final int getPart_id() {
         return part_id;
     }
 
-    public Date getEff_date() {
+    public final Date getEff_date() {
         return eff_date;
     }
 
-    public String getPart_name() {
+    public final String getPart_name() {
         return part_name;
     }
 
-    public String getPart_description() {
+    public final String getPart_description() {
         return part_description;
     }
 
-    public String getManufacturer() {
+    public final String getManufacturer() {
         return manufacturer;
     }
 
-    public String getPart_image() {
+    public final String getPart_image() {
         return part_image;
     }
 
-    public double getSalePrice() {
+    public final double getSalePrice() {
         return salePrice;
     }
 
-    public int getQty() {
+    public final int getQty() {
         return qty;
     }
     
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         int hash = 7;
         hash = 59 * hash + Objects.hashCode(this.part_id);
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj) {
         if (obj == null) {
             return false;
         }
@@ -129,7 +140,7 @@ public class Part {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return "Part{" + "part_id=" + part_id + ",   eff_date=" + eff_date 
                 +  ", part_image=" + this.part_image+ ",   salePrice=" + salePrice  + ",  qty=" + qty 
                 +  ", part_name=" + part_name + ",       manufacturer=" + manufacturer

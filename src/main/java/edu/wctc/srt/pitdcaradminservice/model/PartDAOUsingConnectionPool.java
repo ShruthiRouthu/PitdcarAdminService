@@ -50,8 +50,7 @@ public class PartDAOUsingConnectionPool  implements PartDAOStrategy {
             Object obj = (m.get(PART_ID) == null)? "" : m.get(PART_ID);
             part.setPart_id(Integer.parseInt(obj.toString()));            
             
-            obj = (m.get(EFF_DATE) == null)? "" : m.get(EFF_DATE);
-            part.setEff_date((Date)obj);
+
             
             obj = (m.get(PART_NAME)== null)? "" : m.get(PART_NAME);
             part.setPart_name(obj.toString());
@@ -90,8 +89,7 @@ public class PartDAOUsingConnectionPool  implements PartDAOStrategy {
             Object obj = (m.get(PART_ID) == null)? "" : m.get(PART_ID);
             part.setPart_id(Integer.parseInt(obj.toString()));            
             
-            obj = (m.get(EFF_DATE) == null)? "" : m.get(EFF_DATE);
-            part.setEff_date((Date)obj);
+
                         
             obj = (m.get(PART_NAME)== null)? "" : m.get(PART_NAME);
             part.setPart_name(obj.toString());
@@ -130,8 +128,7 @@ public class PartDAOUsingConnectionPool  implements PartDAOStrategy {
             Object obj = (rawData.get(PART_ID) == null)? "" : rawData.get(PART_ID);
             part.setPart_id(Integer.parseInt(obj.toString()));            
             
-            obj = (rawData.get(EFF_DATE) == null)? "" : rawData.get(EFF_DATE);
-            part.setEff_date((Date)obj);
+
                         
             obj = (rawData.get(PART_NAME)== null)? "" : rawData.get(PART_NAME);
             part.setPart_name(obj.toString());

@@ -16,14 +16,16 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     </head>
     <body>
+        <p style="text-align:right; margin:25px 25px 0px 25px"> ${user_name} </p>
         <h1 style="text-align:center">Part List</h1>
         
+        <a href="PartController?action=showHomePage" style="margin-bottom: 25px; margin-left:5px">Home</a>
         <div class="table-responsive" style="margin: 25px">
         <table class="table table-striped table-bordered">
             
             <tr style="background-color: #1E90FF; color:FFFFF0;">               
                 <th align="left" >ID</th>
-                <th align="right" >EffDate</th>
+                
                 <th align="left" >Name</th>
                 <th align="left" >Description</th>
                 <th align="left" >Manufaturer</th>
@@ -42,9 +44,7 @@
                         </c:otherwise>
                     </c:choose>          
                                 <td align="left">${p.part_id}</td>
-                                <td align="right">
-                                    <fmt:formatDate pattern="M/d/yyyy" value="${p.eff_date}"></fmt:formatDate>
-                                </td>
+                                
                                 <td align="left">${p.part_name}</td>
                                 <td align="left">${p.part_description}</td>
                                 <td align="left">${p.manufacturer}</td>
@@ -62,6 +62,7 @@
             <p style="font-weight: bold;color: red;width:500px;">Sorry, data could not be retrieved:<br> </p>
         </c:if>
       
+        <p style="text-align:center; margin:30px; color:red"> ${admin_message}<p>    
             
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">  </script>    
