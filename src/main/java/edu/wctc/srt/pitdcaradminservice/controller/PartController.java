@@ -1,14 +1,9 @@
 
 package edu.wctc.srt.pitdcaradminservice.controller;
 
-//import edu.wctc.srt.pitdcaradminservice.model.DBStrategy;
-//import edu.wctc.srt.pitdcaradminservice.model.MySqlDbStrategy;
+
 import edu.wctc.srt.pitdcaradminservice.entity.Part;
 import edu.wctc.srt.pitdcaradminservice.service.PartFacade;
-//import edu.wctc.srt.pitdcaradminservice.model.PartDAO;
-//import edu.wctc.srt.pitdcaradminservice.model.PartDAOStrategy;
-//import edu.wctc.srt.pitdcaradminservice.model.PartDAOUsingConnectionPool;
-//import edu.wctc.srt.pitdcaradminservice.model.PartService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
@@ -69,6 +64,7 @@ public class PartController extends HttpServlet {
     private static final String ACTION_MANAGE_PAGE = "showManagePage";
     private static final String ACTION_EDIT_PAGE = "showEditPage";
     private static final String ACTION_HOME_PAGE = "showHomePage";
+    private static final String ACTION_ADD_PAGE = "showAddPage";
     private static final String ACTION_EDIT = "edit";
     private static final String ACTION_DELETE="delete";
     private static final String ACTION_ADD="add";
@@ -91,10 +87,7 @@ public class PartController extends HttpServlet {
     private String url;
     private String user ;
     private String password ;
-    
-//    private DBStrategy dbStrategy ;
-//    private PartDAOStrategy partDAOStrategy;
-    
+      
     // Injecting Service class PartFacade
     @Inject
     private PartFacade partFacade;
@@ -117,10 +110,6 @@ public class PartController extends HttpServlet {
         HttpSession session = request.getSession();
         ServletContext context = request.getServletContext();
       
-        String destination = "";
-        int part_id;
-        
-        String action = request.getParameter(PARAM_ACTION);
         String user_name = request.getParameter(PARAM_USER_NAME);
         String admin_message = request.getParameter(PARAM_ADMIN_MESSAGE);
         
@@ -130,14 +119,16 @@ public class PartController extends HttpServlet {
         if((admin_message != null) && (admin_message.length() > 0)){
             context.setAttribute(PARAM_ADMIN_MESSAGE,admin_message);
         }
+                
+        String action = request.getParameter(PARAM_ACTION);
+       
+        String destination = "";
+        int part_id;
         
-        try{
-//            PartService partService = null;
-//            partService = getPartService();
-        
+        try{      
             switch(action){
+                
                 case ACTION_HOME_PAGE :
-                   
                     destination = PAGE_HOME;
                     break;
                     
@@ -149,6 +140,10 @@ public class PartController extends HttpServlet {
                 case ACTION_MANAGE_PAGE :
                     resetPartList(request,partFacade);
                     destination = PAGE_MANAGE;
+                    break;
+                    
+                case ACTION_ADD_PAGE : 
+                    destination = PAGE_EDIT;
                     break;
                 
                 case ACTION_EDIT_PAGE :
@@ -183,25 +178,7 @@ public class PartController extends HttpServlet {
                     String part_description = request.getParameter(PARAM_PART_DESCRIPTION);
                     String manufacturer = request.getParameter(PARAM_MANUFACTURER);
                     String part_image = request.getParameter(PARAM_PART_IMAGE);
-                                           
-//                    List<String> key = new ArrayList();
-//                    
-//                    key.add(PARAM_PART_NAME);
-//                    key.add(PARAM_PART_DESCRIPTION);
-//                    key.add(PARAM_MANUFACTURER);
-//                    key.add(PARAM_PART_IMAGE);
-//                    key.add(PARAM_SALE_PRICE);
-//                    key.add(PARAM_QTY);        
-//
-//                    List<Object> value = new ArrayList();
-//                    
-//                    value.add(part_name);
-//                    value.add(part_description);
-//                    value.add(manufacturer);
-//                    value.add(part_image);
-//                    value.add(salePrice);
-//                    value.add(qty);
-                    
+                                                               
                     Part tempPart = new Part();
                     tempPart.setPartId(part_id);
                     tempPart.setPartName(part_name);
@@ -222,8 +199,7 @@ public class PartController extends HttpServlet {
                     resetPartList(request,partFacade);
                     destination = PAGE_MANAGE;
                     break;
-                
-            }
+            } 
             
         }catch(Exception e){
                destination = PAGE_ERROR ; 
@@ -236,60 +212,10 @@ public class PartController extends HttpServlet {
         
     }
     
-//    private PartService getPartService() throws Exception {
-//    
-//            PartService partService = null;
-//         
-//            // getting  dbstrategy class as String
-//            Class dbClassName = Class.forName(dbStrategyClassName) ;
-//            dbStrategy = (DBStrategy)dbClassName.newInstance();   
-//            
-//            // getting daoStrategy class name as String
-//            Class daoClassName = Class.forName(partDAOStrategyClassName);
-//            
-//            // getting the Constructor for partDaoStrategy
-//            Constructor constructor = null ;
-//            
-//            try{
-//                constructor = daoClassName.getConstructor(new Class[] {DBStrategy.class, String.class,
-//                        String.class ,String.class, String.class}); 
-//            } catch (NoSuchMethodException e) {}            
-//            
-//            // if constructor is found use that constructor with data injected through xml
-//            if(constructor != null){
-////                
-////                Object[] constructorArgs = new Object[] {dbStrategy, driverClass, url, user, password};
-////                partDAOStrategy = (PartDAOStrategy)constructor.newInstance(constructorArgs);  
-////                partService =  new PartService(partDAOStrategy);
-//            }
-//            else{  
-//                // Implies that PartDAOStrategyUsingConnectionPool was injected from web.xml , 
-//                // so use connection pooling
-//                Context context = new InitialContext();
-//                DataSource dataSource = (DataSource) context.lookup(JNDI_NAME);
-//                constructor = null ;
-//                
-//                try{
-//                    
-//                    constructor = daoClassName.getConstructor(new Class[] {DBStrategy.class, DataSource.class  });
-//                    Object[] constructorArgs = new Object[] {dbStrategy, dataSource}; 
-//                    partDAOStrategy = (PartDAOStrategy)constructor.newInstance(constructorArgs);  
-//                    partService =  new PartService(partDAOStrategy);
-//                    
-//                } catch (NoSuchMethodException e) { 
-//                    throw e ;
-//                }  
-//            }   
-//       
-//        
-//        return partService;
-//       
-//    }
-    
     private int getParameterPart_id(HttpServletRequest request){
         int part_id = -1; //flag
         String temp = request.getParameter(PARAM_PARTID);
-        if(temp != null){
+        if(temp != null && temp.length() != 0){
             part_id = Integer.parseInt(temp);
         }
         return part_id;
@@ -299,18 +225,6 @@ public class PartController extends HttpServlet {
         List<Part> parts = partFacade.findAll(); 
         request.setAttribute(ATTRIBUTE_PARTS ,parts);
     } 
-
-    @Override
-    public void init() throws ServletException {
-        
-//        partDAOStrategyClassName = getServletConfig().getInitParameter(IP_PART_DAO);
-//        dbStrategyClassName = getServletConfig().getInitParameter(IP_DB_STRATEGY);
-//        driverClass = getServletConfig().getInitParameter(IP_DRIVER_CLASS);
-//        url = getServletConfig().getInitParameter(IP_URL);
-//        user  = getServletConfig().getInitParameter(IP_USER_NAME); 
-//        password = getServletConfig().getInitParameter(IP_PASSWORD); 
-        
-    }
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -350,7 +264,5 @@ public class PartController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    
-    
 
 }

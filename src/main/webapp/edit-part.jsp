@@ -12,13 +12,13 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Edit Part</title>
+        <title>Add/Edit Part</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     </head>
     <body>
         
         <p style="text-align:right; margin:25px 25px 0px 25px"> ${user_name} </p>
-        <h1 style="text-align:center">Edit Part</h1>
+        <h1 style="text-align:center">Add/Edit Part</h1>
         
         <a href="PartController?action=showHomePage" style="margin-bottom: 25px; margin-left:5px">Home</a>
         <form id="editForm" name="editForm" method="POST" action="PartController?action=edit" style="margin: 25px" class="form-horizontal">
