@@ -28,11 +28,11 @@
            
           
            
-           <input type="hidden" name="partID" id="partID" value="${selectedPart.part_id}" >
+           <input type="hidden" name="partID" id="partID" value="${selectedPart.partId}" >
 
            <div class="form-group">
             <label for="part_name">Name:  </label>
-            <input  class="form-control" id="part_name" name="part_name" type="text" value="${selectedPart.part_name}" required>
+            <input  class="form-control" id="part_name" name="part_name" type="text" value="${selectedPart.partName}" required>
            </div>
 
           
@@ -40,7 +40,7 @@
            <div class="form-group">
             <label for="part_description">Description:  </label>
             <input  class="form-control" id="part_description" name="part_description" type="text" 
-                    value="${selectedPart.part_description}" required>
+                    value="${selectedPart.partDescription}" required>
            </div>
 
            <div class="form-group">
@@ -50,7 +50,7 @@
 
            <div class="form-group">
             <label for="part_image">Image URL:  </label>
-            <input  class="form-control" id="part_image" name="part_image" type="text" value="${selectedPart.part_image}" required>
+            <input  class="form-control" id="part_image" name="part_image" type="text" value="${selectedPart.partImage}" required>
            </div>
 
            <div class="form-group">

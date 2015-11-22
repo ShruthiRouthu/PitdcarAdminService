@@ -29,7 +29,7 @@
                 
                 <th align="left" >Name</th>
                 <th align="left" >Description</th>
-                <th align="left" >Manufaturer</th>
+                <th align="left" >Manufacturer</th>
                 <th align="right" >SalePrice</th>
                 <th align="right" >Qty</th>
                 <th align="left" >ImageURL</th>
@@ -46,17 +46,17 @@
                         <tr style="background-color: #FFFFF0">
                         </c:otherwise>
                     </c:choose>          
-                                <td align="left">${p.part_id}</td>
+                                <td align="left">${p.partId}</td>
                                 
-                                <td align="left">${p.part_name}</td>
-                                <td align="left">${p.part_description}</td>
+                                <td align="left">${p.partName}</td>
+                                <td align="left">${p.partDescription}</td>
                                 <td align="left">${p.manufacturer}</td>
                                 <td align="right">$${p.salePrice}</td>
                                 <td align="right">${p.qty}</td>
-                                <td align="left">${p.part_image}</td>
-                                <td align="center" onclick="location.href='PartController?action=showEditPage&partID=${p.part_id}'">
+                                <td align="left">${p.partImage}</td>
+                                <td align="center" onclick="location.href='PartController?action=showEditPage&partID=${p.partId}'">
                                     <span class="glyphicon glyphicon-pencil" aria-hidden="true" ></span></td>
-                                <td align="center" onclick="location.href='PartController?action=delete&partID=${p.part_id}'">
+                                <td align="center" onclick="location.href='PartController?action=delete&partID=${p.partId}'">
                                     <span class="glyphicon glyphicon-trash" aria-hidden="true" ></span></td> 
                                 
                            
