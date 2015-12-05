@@ -1,21 +1,18 @@
 
 package edu.wctc.srt.pitdcaradminservice.controller;
 
-import edu.wctc.srt.pitdcaradminservice.model.DBStrategy;
-import edu.wctc.srt.pitdcaradminservice.model.MySqlDbStrategy;
-import edu.wctc.srt.pitdcaradminservice.model.Part;
-import edu.wctc.srt.pitdcaradminservice.model.PartDAO;
-import edu.wctc.srt.pitdcaradminservice.model.PartDAOStrategy;
-import edu.wctc.srt.pitdcaradminservice.model.PartDAOUsingConnectionPool;
-import edu.wctc.srt.pitdcaradminservice.model.PartService;
+import edu.wctc.srt.pitdcaradminservice.entity.Part;
+import edu.wctc.srt.pitdcaradminservice.service.PartFacade;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.inject.Inject;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.servlet.RequestDispatcher;
@@ -88,9 +85,11 @@ public class PartController extends HttpServlet {
     private String user ;
     private String password ;
     
-    private DBStrategy dbStrategy ;
-    private PartDAOStrategy partDAOStrategy;
+//    private DBStrategy dbStrategy ;
+//    private PartDAOStrategy partDAOStrategy;
     
+    @Inject
+    private PartFacade partService;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -123,8 +122,8 @@ public class PartController extends HttpServlet {
         }
         
         try{
-            PartService partService = null;
-            partService = getPartService();
+//            PartService partService = null;
+//            partService = getPartService();
         
             switch(action){
                 case ACTION_HOME_PAGE :
@@ -144,7 +143,7 @@ public class PartController extends HttpServlet {
                 
                 case ACTION_EDIT_PAGE :
                     part_id = getParameterPart_id(request);
-                    Part part = partService.findPartById(part_id);
+                    Part part = partService.find(part_id);
                     request.setAttribute(ATTRIBUTE_SELECTED_PART, part);
                     destination = PAGE_EDIT;
                     break;
@@ -152,7 +151,8 @@ public class PartController extends HttpServlet {
                 case ACTION_DELETE :
                     part_id = getParameterPart_id(request);
                     if(part_id != -1){
-                        partService.deletePartById(part_id);
+                        Part deletePart = partService.find(part_id);
+                        partService.remove(deletePart);
                     }
                     resetPartList(request,partService);
                     destination = PAGE_MANAGE;
@@ -162,40 +162,50 @@ public class PartController extends HttpServlet {
                 case ACTION_ADD :    
                     part_id = getParameterPart_id(request);
                 
-                 //   String temp
-                    String salePrice  = request.getParameter(PARAM_SALE_PRICE);
-                 //   double salePrice = Double.parseDouble(temp);
-                    
-                  //  temp
-                    String qty  = request.getParameter(PARAM_QTY);
-                  //  int qty = Integer.parseInt(temp);
+                
+                    String salePriceTemp  = request.getParameter(PARAM_SALE_PRICE);
+                    BigDecimal salePrice = new BigDecimal(salePriceTemp); //Double.parseDouble(salePriceTemp);
+                                     
+                    String qtyTemp  = request.getParameter(PARAM_QTY);
+                    int qty = Integer.parseInt(qtyTemp);
                     
                     String part_name  = request.getParameter(PARAM_PART_NAME);
                     String part_description = request.getParameter(PARAM_PART_DESCRIPTION);
                     String manufacturer = request.getParameter(PARAM_MANUFACTURER);
                     String part_image = request.getParameter(PARAM_PART_IMAGE);
                                            
-                    List<String> key = new ArrayList();
+//                    List<String> key = new ArrayList();
+//                    
+//                    key.add(PARAM_PART_NAME);
+//                    key.add(PARAM_PART_DESCRIPTION);
+//                    key.add(PARAM_MANUFACTURER);
+//                    key.add(PARAM_PART_IMAGE);
+//                    key.add(PARAM_SALE_PRICE);
+//                    key.add(PARAM_QTY);        
+//
+//                    List<Object> value = new ArrayList();
+//                    
+//                    value.add(part_name);
+//                    value.add(part_description);
+//                    value.add(manufacturer);
+//                    value.add(part_image);
+//                    value.add(salePrice);
+//                    value.add(qty);
                     
-                    key.add(PARAM_PART_NAME);
-                    key.add(PARAM_PART_DESCRIPTION);
-                    key.add(PARAM_MANUFACTURER);
-                    key.add(PARAM_PART_IMAGE);
-                    key.add(PARAM_SALE_PRICE);
-                    key.add(PARAM_QTY);        
-
-                    List<Object> value = new ArrayList();
                     
-                    value.add(part_name);
-                    value.add(part_description);
-                    value.add(manufacturer);
-                    value.add(part_image);
-                    value.add(salePrice);
-                    value.add(qty);
                     
                     // Logic to decide between INSERT or UPDATE
                     if(part_id == -1){ 
-                       partService.insertPart(key, value);
+                       //partService.insertPart(key, value);
+                        Part addPart = new Part();
+                        addPart.setPartName(part_name);
+                        addPart.setPartDescription(part_description);
+                        addPart.setPartImage(part_image);
+                        addPart.setSalePrice(salePrice);
+                        addPart.setQty(qty);
+                        
+                        partService.create(addPart);
+                        
                     }
                     else{
                        partService.updatePart(part_id, key, value); 
@@ -218,7 +228,7 @@ public class PartController extends HttpServlet {
         
     }
     
-    private PartService getPartService() throws Exception {
+  /*  private PartService getPartService() throws Exception {
     
             PartService partService = null;
          
@@ -266,7 +276,7 @@ public class PartController extends HttpServlet {
         
         return partService;
        
-    }
+    } */
     
     private int getParameterPart_id(HttpServletRequest request){
         int part_id = -1; //flag
@@ -277,20 +287,20 @@ public class PartController extends HttpServlet {
         return part_id;
     }
     
-    private void resetPartList(HttpServletRequest request,PartService partService) throws SQLException,Exception{
-        List<Part> parts = partService.findAllParts(); 
+    private void resetPartList(HttpServletRequest request,PartFacade partService) throws SQLException,Exception{
+        List<Part> parts = partService.findAll(); 
         request.setAttribute(ATTRIBUTE_PARTS ,parts);
     } 
 
     @Override
     public void init() throws ServletException {
-        
-        partDAOStrategyClassName = getServletConfig().getInitParameter(IP_PART_DAO);
-        dbStrategyClassName = getServletConfig().getInitParameter(IP_DB_STRATEGY);
-        driverClass = getServletConfig().getInitParameter(IP_DRIVER_CLASS);
-        url = getServletConfig().getInitParameter(IP_URL);
-        user  = getServletConfig().getInitParameter(IP_USER_NAME); 
-        password = getServletConfig().getInitParameter(IP_PASSWORD); 
+//        
+//        partDAOStrategyClassName = getServletConfig().getInitParameter(IP_PART_DAO);
+//        dbStrategyClassName = getServletConfig().getInitParameter(IP_DB_STRATEGY);
+//        driverClass = getServletConfig().getInitParameter(IP_DRIVER_CLASS);
+//        url = getServletConfig().getInitParameter(IP_URL);
+//        user  = getServletConfig().getInitParameter(IP_USER_NAME); 
+//        password = getServletConfig().getInitParameter(IP_PASSWORD); 
         
     }
     
