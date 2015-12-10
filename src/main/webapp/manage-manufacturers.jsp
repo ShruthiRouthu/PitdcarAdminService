@@ -1,6 +1,6 @@
 <%-- 
-    Document   : manage-parts.jsp
-    Created on : Oct 17, 2015, 12:29:32 AM
+    Document   : manage-manufacturers
+    Created on : Dec 5, 2015, 7:20:37 PM
     Author     : Shruthi Routhu 
 --%>
 
@@ -13,15 +13,13 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title> Manage Parts </title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <title>Manage Manufactures</title>
+         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     </head>
     <body>
+      <h1 style="text-align:center">Manufacturer List</h1>
         
-        
-        <h1 style="text-align:center">Manage Parts</h1>
-        
-        <a href="PartController?action=showHomePage" style="margin-bottom: 25px; margin-left:5px">Home</a>
+        <a href="ManufacturerController?action=showHomePage" style="margin-bottom: 25px; margin-left:5px">Home</a>
         
         <sec:authorize access="hasAnyRole('ROLE_MGR')">
             <div class="table-responsive" style="margin: 25px">
@@ -29,18 +27,18 @@
 
                 <tr style="background-color: #1E90FF; color:FFFFF0;">               
                     <th align="left" >ID</th>
-
                     <th align="left" >Name</th>
-                    <th align="left" >Description</th>
-                    <th align="left" >Manufaturer</th>
-                    <th align="right" >SalePrice</th>
-                    <th align="right" >Qty</th>
-                    <th align="center" >Image</th>
+                    <th align="left" >Street Address1 </th>
+                    <th align="left" >Street Address2</th>
+                    <th align="left" >City</th>
+                    <th align="left" >State</th>
+                    <th align="left" >Zip</th>
+                    <th align="left" >Phone</th>
                     <th align="center" >Edit</th>
                     <th align="center" >Delete</th>
                 </tr>
 
-                    <c:forEach var="p" items="${parts}" varStatus="rowCount">
+                    <c:forEach var="m" items="${manufacturers}" varStatus="rowCount">
                         <c:choose>
                             <c:when test="${rowCount.count % 2 == 0}">
                                 <tr style="background-color: white;">
@@ -49,48 +47,45 @@
                             <tr style="background-color: #FFFFF0">
                             </c:otherwise>
                         </c:choose>          
-                                    <td align="left">${p.partId}</td>
+                                    <td align="left">${m.manufacturerId}</td>
 
-                                    <td align="left">${p.partName}</td>
-                                    <td align="left">${p.partDescription}</td>
-                                    <td align="left">${p.manufacturerId.manufacturerName}</td>
-                                    <td align="right">$${p.salePrice}</td>
-                                    <td align="right">${p.qty}</td>
-                                    <td align="center">
-                                        <img src="resources/${p.partImage}" style="width:30px;height:30px;">
-                                    </td>
-                                    <td align="center" onclick="location.href='PartController?action=showEditPage&partId=${p.partId}'">
+                                    <td align="left">${m.manufacturerName}</td>
+                                    <td align="left">${m.address1}</td>
+                                    <td align="left">${m.address2}</td>
+                                    <td align="left">${m.city}</td>
+                                    <td align="left">${m.state}</td>
+                                    <td align="left">${m.zipcode}</td>
+                                    <td align="left">${m.phone}</td>
+                                    <td align="center" onclick="location.href='ManufacturerController?action=showEditPage&manufacturerId=${m.manufacturerId}'">
                                         <span class="glyphicon glyphicon-pencil" aria-hidden="true" ></span></td>
-                                    <td align="center" onclick="location.href='PartController?action=delete&partId=${p.partId}'">
+                                    <td align="center" onclick="location.href='ManufacturerController?action=delete&manufacturerId=${m.manufacturerId}'">
                                         <span class="glyphicon glyphicon-trash" aria-hidden="true" ></span></td> 
-
-
                                 </tr>
                     </c:forEach>
 
             </table>
 
             <br>
-            <input type="button"  name="addPart"  value="Add" onclick="location.href='PartController?action=showEditPage'" >
+            <input type="button"  name="add"  value="Add" onclick="location.href='ManufacturerController?action=showEditPage'" >
             <br>
-            
+
             </div>
 
-            <c:if test="${parts == null}">
+
+            <c:if test="${manufacturers == null}">
                 <p style="font-weight: bold;color: red;width:500px;">Sorry, data could not be retrieved:<br> </p>
             </c:if>
-            
-        
+      
         </sec:authorize>
-                
-        <br><br>    
+        
+        <br>    
              
         <sec:authorize access="hasAnyRole('ROLE_MGR','ROLE_USER')">
             Logged in as: <sec:authentication property="principal.username"></sec:authentication> ::
             <a href='<%= this.getServletContext().getContextPath() + "/j_spring_security_logout"%>'>Log Me Out</a>
         </sec:authorize>   
-        
+            
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">  </script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">  </script>   
     </body>
 </html>

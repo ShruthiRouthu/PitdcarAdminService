@@ -8,68 +8,103 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Edit Part</title>
+        <title>Add/Edit Part</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     </head>
     <body>
         
-        <p style="text-align:right; margin:25px 25px 0px 25px"> ${user_name} </p>
-        <h1 style="text-align:center">Edit Part</h1>
+        <h1 style="text-align:center">Add/Edit Part</h1>
         
         <a href="PartController?action=showHomePage" style="margin-bottom: 25px; margin-left:5px">Home</a>
+        
         <form id="editForm" name="editForm" method="POST" action="PartController?action=edit" style="margin: 25px" class="form-horizontal">
+          
+           <sec:csrfInput />
             
+           <sec:authorize access="hasAnyRole('ROLE_MGR')">  
          
-           <c:set var="part" scope="page" value="${selectedPart}"/> 
-           
-          
-           
-           <input type="hidden" name="partID" id="partID" value="${selectedPart.part_id}" >
+               <c:set var="part" scope="page" value="${selectedPart}"/> 
 
-           <div class="form-group">
-            <label for="part_name">Name:  </label>
-            <input  class="form-control" id="part_name" name="part_name" type="text" value="${selectedPart.part_name}" required>
-           </div>
-
-          
-
-           <div class="form-group">
-            <label for="part_description">Description:  </label>
-            <input  class="form-control" id="part_description" name="part_description" type="text" 
-                    value="${selectedPart.part_description}" required>
-           </div>
-
-           <div class="form-group">
-            <label for="manufacturer">Manufacturer:  </label>
-            <input  class="form-control" id="manufacturer" name="manufacturer" type="text" value="${selectedPart.manufacturer}" required >
-           </div>
-
-           <div class="form-group">
-            <label for="part_image">Image URL:  </label>
-            <input  class="form-control" id="part_image" name="part_image" type="text" value="${selectedPart.part_image}" required>
-           </div>
-
-           <div class="form-group">
-            <label for="salePrice">Sale Price:  </label>
-            <input  class="form-control" id="salePrice" name="salePrice" type="number"
-                    value="${selectedPart.salePrice}" step="0.01" min="0" required>
-           </div>
-
-           <div class="form-group">
-            <label for="qty">Quantity:  </label>
-            <input  class="form-control" id="qty" name="qty" type="number" value="${selectedPart.qty}" min="0" required >
-           </div> 
+                <c:choose>
+                        <c:when test="${not empty selectedPart}">
+                            <input type="hidden" name="partId" id="partId" value="${selectedPart.partId}" >        
+                        </c:when>
+                </c:choose>
 
 
-          <button type="submit" class="btn btn-primary">Save changes</button>
+               <div class="form-group">
+                <label for="partName">Name:  </label>
+                <input  class="form-control" id="partName" name="partName" type="text" value="${selectedPart.partName}" required>
+               </div>
+
+               <div class="form-group">
+                <label for="partDescription">Description:  </label>
+                <input  class="form-control" id="partDescription" name="partDescription" type="text" 
+                        value="${selectedPart.partDescription}" required>
+               </div>
+
+            <!--   <div class="form-group">
+                <label for="manufacturer">Manufacturer:  </label>
+                <input  class="form-control" id="manufacturer" name="manufacturer" type="text" value="${selectedPart.manufacturerId.manufacturerName}" required >
+               </div> -->
+               
+               <div class="form-group">
+                    <label for="manufacturerDD">Manufacturer:  </label>
+                    <select id="manufacturerDD" name="manufacturerId">
+                        <c:choose>
+                            <c:when test="${not empty selectedPart.manufacturerId}">
+                                <option value="-1">None</option> 
+                                <c:forEach var="manufacturer" items="${manufacturers}">                                       
+                                    <option value="${manufacturer.manufacturerId}" <c:if test="${selectedPart.manufacturerId.manufacturerId == manufacturer.manufacturerId}">selected</c:if>>${manufacturer.manufacturerName}</option>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <option value="-1" selected>None</option>
+                                <c:forEach var="manufacturer" items="${manufacturers}" varStatus="rowCount">                                       
+                                    <option value="${manufacturer.manufacturerId}">${manufacturer.manufacturerName}</option>
+                                </c:forEach>
+                            </c:otherwise>
+                        </c:choose>
+                    </select>
+
+                </div>
+               
+               
+
+               <div class="form-group">
+                <label for="partImage">Image URL:  </label>
+                <input  class="form-control" id="partImage" name="partImage" type="text" value="${selectedPart.partImage}" required>
+               </div>
+
+               <div class="form-group">
+                <label for="salePrice">Sale Price:  </label>
+                <input  class="form-control" id="salePrice" name="salePrice" type="number"
+                        value="${selectedPart.salePrice}" step="0.01" min="0" required>
+               </div>
+
+               <div class="form-group">
+                <label for="qty">Quantity:  </label>
+                <input  class="form-control" id="qty" name="qty" type="number" value="${selectedPart.qty}" min="0" required >
+               </div> 
+
+               <button type="submit" class="btn btn-primary">Save changes</button>
         
+           </sec:authorize>
+           
         </form>
-        
-         <p style="text-align:center; margin:30px; color:red"> ${admin_message}<p>
+                    
+        <br><br>    
+             
+        <sec:authorize access="hasAnyRole('ROLE_MGR','ROLE_USER')">
+            Logged in as: <sec:authentication property="principal.username"></sec:authentication> ::
+            <a href='<%= this.getServletContext().getContextPath() + "/j_spring_security_logout"%>'>Log Me Out</a>
+        </sec:authorize>   
         
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">  </script>

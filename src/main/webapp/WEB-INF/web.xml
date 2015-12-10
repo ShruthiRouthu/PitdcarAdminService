@@ -5,40 +5,51 @@
 	 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 	 version="3.1">
     
+    <!-- Begin Spring-specific configuration -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:applicationContext.xml</param-value>
+    </context-param>
+        
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+    <!-- END Spring configuration -->
+    
+    <!-- begin additional Spring Security config -->
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <!-- end Spring security config -->
+    
     <servlet>
         <servlet-name>PartController</servlet-name>
-        <servlet-class>edu.wctc.srt.pitdcaradminservice.controller.PartController</servlet-class>
-        <init-param>
-            <param-name>partDAO</param-name>
-            <param-value>edu.wctc.srt.pitdcaradminservice.model.PartDAOUsingConnectionPool</param-value>
-        </init-param>
-        <init-param>
-            <param-name>dbStrategy</param-name>
-            <param-value>edu.wctc.srt.pitdcaradminservice.model.MySqlDbStrategy</param-value>
-        </init-param>
-        <init-param>
-            <param-name>driverClass</param-name>
-            <param-value>com.mysql.jdbc.Driver</param-value>
-        </init-param>
-        <init-param>
-            <param-name>url</param-name>
-            <param-value>jdbc:mysql://localhost:3306/pitdcar</param-value>
-        </init-param>
-        <init-param>
-            <param-name>userName</param-name>
-            <param-value>root</param-value>
-        </init-param>
-        <init-param>
-            <param-name>password</param-name>
-            <param-value>DJ2015</param-value>
-        </init-param>
-       
-        <load-on-startup>1</load-on-startup>
+        <servlet-class>edu.wctc.srt.pitdcaradminservice.controller.PartController</servlet-class>        
     </servlet>
     
     <servlet-mapping>
         <servlet-name>PartController</servlet-name>
         <url-pattern>/PartController</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>ManufacturerController</servlet-name>
+        <servlet-class>edu.wctc.srt.pitdcaradminservice.controller.ManufacturerController</servlet-class> 
+             
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>ManufacturerController</servlet-name>
+        <url-pattern>/ManufacturerController</url-pattern>
     </servlet-mapping>
     
     <session-config>
