@@ -2,14 +2,19 @@ package edu.wctc.srt.pitdcaradminservice.controller;
 
 import edu.wctc.srt.pitdcaradminservice.entity.Manufacturer;
 import edu.wctc.srt.pitdcaradminservice.service.ManufacturerService;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import static java.lang.System.out;
 import java.sql.SQLException;
 import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonReader;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -95,40 +100,7 @@ public class ManufacturerController extends HttpServlet {
         try{
             
             switch(action){
-                
-                case  AJAX_LIST_ACTION :
-                    
-                    List<Manufacturer> manufacturers = manufacturerService.findAll();
-                        JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
-
-                    for(Manufacturer m: manufacturers ){
-                        jsonArrayBuilder.add(
-                                Json.createObjectBuilder()
-                                .add(PARAM_MANUFACTURERID, m.getManufacturerId().toString())
-                                .add(PARAM_MANUFACTURER_NAME, m.getManufacturerName())
-                                .add(PARAM_ADDRESS1, m.getAddress1())
-                                .add(PARAM_ADDRESS2, m.getAddress2())
-                                .add(PARAM_CITY, m.getCity())
-                                .add(PARAM_STATE, m.getState())
-                                .add(PARAM_ZIPCODE, m.getZipcode())
-                                .add(PARAM_PHONE, m.getPhone())
-                        );
-                    }
-
-                    JsonArray manufacturersJson = jsonArrayBuilder.build();
-                    response.setContentType("application/json");
-                    out.write(manufacturersJson.toString());
-                    out.flush();
-                    return; // must not continue at bottom!
-                    
-                case AJAX_DELETE_ACTION :
-                    manufacturerId = getParameterManufacturerId(request);
-                    if(manufacturerId != -1){
-                        Manufacturer deleteManufacturer = manufacturerService.findById(Integer.toString(manufacturerId));
-                        manufacturerService.remove(deleteManufacturer);
-                    }
-                    return; // must not continue at bottom!
-                                  
+                         
                 case ACTION_HOME_PAGE :
                     destination = PAGE_HOME;
                     break;
@@ -202,9 +174,57 @@ public class ManufacturerController extends HttpServlet {
                     
                     resetManuList(request,manufacturerService);
                     destination = PAGE_MANAGE;
-                    break;    
+                    break;
                     
+                case AJAX_DELETE_ACTION :
+                    manufacturerId = getParameterManufacturerId(request);
+                    if(manufacturerId != -1){
+                        Manufacturer deleteManufacturer = manufacturerService.findById(Integer.toString(manufacturerId));
+                        manufacturerService.remove(deleteManufacturer);
+                    }
+                    return; // must not continue at bottom!    
+                    
+                case  AJAX_LIST_ACTION :
+                    List<Manufacturer> manufacturers = manufacturerService.findAll();
+                    JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+                    for(Manufacturer m: manufacturers ){
+                        jsonArrayBuilder.add(
+                                Json.createObjectBuilder()
+                                .add(PARAM_MANUFACTURERID, m.getManufacturerId().toString())
+                                .add(PARAM_MANUFACTURER_NAME, m.getManufacturerName())
+                                .add(PARAM_ADDRESS1, m.getAddress1())
+                                .add(PARAM_ADDRESS2, m.getAddress2())
+                                .add(PARAM_CITY, m.getCity())
+                                .add(PARAM_STATE, m.getState())
+                                .add(PARAM_ZIPCODE, m.getZipcode())
+                                .add(PARAM_PHONE, m.getPhone())
+                        );
+                    }
+                    JsonArray manufacturersJson = jsonArrayBuilder.build();
+                    response.setContentType("application/json");
+                    out.write(manufacturersJson.toString());
+                    out.flush();
+                    return; // must not continue at bottom!
               
+                case AJAX_FINDBY_ID :
+                    manufacturerId = getParameterManufacturerId(request);
+                    if(manufacturerId != -1){
+                        Manufacturer foundManufacturer = manufacturerService.findById(Integer.toString(manufacturerId));
+                        JsonObjectBuilder builder = Json.createObjectBuilder()
+                                .add(PARAM_MANUFACTURERID, foundManufacturer.getManufacturerId().toString())
+                                .add(PARAM_MANUFACTURER_NAME, foundManufacturer.getManufacturerName())
+                                .add(PARAM_ADDRESS1, foundManufacturer.getAddress1())
+                                .add(PARAM_ADDRESS2, foundManufacturer.getAddress2())
+                                .add(PARAM_CITY, foundManufacturer.getCity())
+                                .add(PARAM_STATE, foundManufacturer.getState())
+                                .add(PARAM_ZIPCODE, foundManufacturer.getZipcode())
+                                .add(PARAM_PHONE, foundManufacturer.getPhone());
+                        JsonObject manufacturerJson = builder.build();
+                        response.setContentType("application/json");
+                        out.write(manufacturerJson.toString());
+                        out.flush();  
+                    }
+                    return; // must not continue at bottom!
                 
             }
             

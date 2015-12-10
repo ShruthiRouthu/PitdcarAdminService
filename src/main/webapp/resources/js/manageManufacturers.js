@@ -32,7 +32,6 @@
             
         } 
         
-        // function to display manufacturers received from controller
         function displayManufacturers(manufacturers) {
             alert("Displaying manufacturers");
             $('tbody tr').remove(); //to avoid duplicate entries
@@ -98,72 +97,77 @@
             $addEditDiv.show();
         }
       
-         
         $tableBody.on('click', '.editBtn', function(){
             alert('edit click working');
             var clickedManufacturerId = $(this).val();
             $.ajax({
                 type: 'GET',
-                url: controllerName + "?action=deleteAjax&manufacturerId=" + clickedManufacturer ,
+                url: controllerName + "?action=findByIdAjax&manufacturerId=" + clickedManufacturer ,
                 dataType: 'json',
                 success: showEditForm
             });
             
         });
  
-        function showEditForm(author) {
-           alert(author.authorId + "filling form");
-           $('#authorName').val(author.authorName);
-           $('#authorId').val(author.authorId);
-           $('#authorId').hide();
+        function showEditForm(manufacturer) {
+           alert(manufacturer.manufacturerId + "filling form");
+           $('#manufacturerId').val(manufacturer.manufacturerId);
+           $('#manufacturerId').hide();
+           $('#manufacturerName').val(manufacturer.manufacturerName);
+           $('#address1').val(manufacturer.address1);
+           $('#address2').val(manufacturer.address2);
+           $('#city').val(manufacturer.city);
+           $('#state').val(manufacturer.state);
+           $('#zipcode').val(manufacturer.zipcode);
+           $('#phone').val(manufacturer.phone);
            $addEditDiv.show();
         }
         
-        $addEditDiv.on('click', '#addAuthor', function () {
-            alert("Save author click working");
-            var clickedAuthorId = $('#authorId').val();
-            if(clickedAuthorId == 0){
+        $addEditDiv.on('click', '#addManufacturer', function () {
+            alert("Save manufacturer click working");
+            var clickedManufacturerId = $('#manufacturerId').val();
+            if(clickedManufacturerId === 0){
                 alert("its add");
                 $.ajax({
                     type: 'POST',
                     contentType: 'application/json',
-                    url: baseURL + "authors",
+                    url: controllerName + "manufacturers",
                     dataType: "json",
                     data: formToJSON(),
                     success: function (data, textStatus, jqXHR) {
-                        alert('Author added successfully');
-                        findAllAuthors();
+                        alert('Manufacturer added successfully');
+                        findAllManufacturers();
                         hideAddForm();  
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         console.log(jqXHR.status);
                         // Fix a bug in JQuery: 201 means the insert succeeded!
                         if (jqXHR.status === 201 || jqXHR.status === 200) {
-                            alert('author added successfully');
-                            findAllAuthors();
+                            alert('manufacturer added successfully');
+                            findAllManufacturers();
                             hideAddForm();
                         }
                         else {
-                            alert('addAuthor error:  ' + textStatus);
+                            alert('addManufacturer error:  ' + textStatus);
                         }
                     }
                 }); 
             }
             else{
-                alert("its edit url : " + baseURL + "authors/" + clickedAuthorId );
+                alert("its edit url : " +controllerName + "manufacturers/" + clickedManufacturerId );
                 $.ajax({
-                    type: 'PUT',
+                    type: 'GET',
                     contentType: 'application/json',
-                    url: baseURL + "authors/" + clickedAuthorId ,
+                    url: controllerName + "manufacturers/" + clickedManufacturerId ,
                     dataType: "html",
                     data: formToJSONEdit(),
                     success: function (data, textStatus, jqXHR) {
-                        alert('Author updated successfully');
-                        findAllAuthors();
+                        alert('Manufacturer updated successfully');
+                        findAllManufacturers();
                         hideAddForm();
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        alert('updateAuthor error: ' + textStatus);
+                        alert('updateManufacturer error: ' + textStatus);
                     }
                 });
             }
@@ -172,16 +176,26 @@
         // Helper functions to serialize all the form fields into a JSON string
         function formToJSON() {
             return JSON.stringify({
-                "authorName": $('#authorName').val()
-               // "dateAdded": $('#dateAdded').val()
+                "manufacturerName": $('#manufacturerName').val(),
+                "address1": $('#address1').val() ,  
+                "address2": $('#address2').val() , 
+                "city": $('#city').val() ,
+                "state": $('#state').val() ,
+                "zipcode": $('#zipcode').val() ,
+                "phone": $('#phone').val() 
             });
         }
         
         function formToJSONEdit() {
-            return JSON.stringify({
-                "authorId" : $('#authorId').val(),
-                "authorName": $('#authorName').val()
-               // "dateAdded": $('#dateAdded').val()
+              return JSON.stringify({
+                "manufacturerId": $('#manufacturerId').val(),  
+                "manufacturerName": $('#manufacturerName').val(),
+                "address1": $('#address1').val() ,  
+                "address2": $('#address2').val() , 
+                "city": $('#city').val() ,
+                "state": $('#state').val() ,
+                "zipcode": $('#zipcode').val() ,
+                "phone": $('#phone').val() 
             });
         }
         
