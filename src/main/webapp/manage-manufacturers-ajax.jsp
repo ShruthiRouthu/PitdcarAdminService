@@ -47,30 +47,23 @@
                   
             </div>     
  
-            <div id="addEditDiv"  style="display:none;" >
-                <form style="margin: 25px" class="form-horizontal">
-                    <c:set var="part" scope="page" value=""/> 
+            <div id="addEditDiv" >
 
-                    <c:choose>
-                        <c:when test="${not empty selectedManufacturer}">
-                            <input type="hidden" name="manufacturerId" id="manufacturerId" value="${selectedManufacturer.manufacturerId}" >        
-                        </c:when>
-                    </c:choose>
-
+                    <input class="form-control" id="manufacturerId"  name="manufacturerId" type="text" value="" >        
+                   
                     <div class="form-group">
                         <label for="manufacturerName">Name:  </label>
-                        <input  class="form-control" id="manufacturerName" name="manufacturerName" type="text" value="${selectedManufacturer.manufacturerName}" required>
+                        <input  class="form-control" id="manufacturerName" name="manufacturerName" type="text" value="" required>
                     </div>
 
                     <div class="form-group">
                         <label for="address1">Street Address1:  </label>
-                        <input  class="form-control" id="address1" name="address1" type="text" 
-                                value="${selectedManufacturer.address1}" required>
+                        <input  class="form-control" id="address1" name="address1" type="text" value="" required>
                     </div>
 
                     <div class="form-group">
                         <label for="address2">Street Address2:  </label>
-                        <input  class="form-control" id="address2" name="address2" type="text" value="${selectedManufacturer.address2}"  >
+                        <input  class="form-control" id="address2" name="address2" type="text" value=""  >
                     </div>
 
                     <div class="form-group">
@@ -93,9 +86,7 @@
                         <input  class="form-control" id="phone" name="phone" type="text" value="${selectedManufacturer.phone}" required>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-
-                </form> 
+                    <button type="submit" id="addManufacturer" class="btn btn-primary">Save </button>
            
             </div>
                     
