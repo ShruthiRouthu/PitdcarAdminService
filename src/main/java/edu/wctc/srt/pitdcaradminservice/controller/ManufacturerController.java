@@ -52,11 +52,13 @@ public class ManufacturerController extends HttpServlet {
     private static final String ACTION_EDIT_PAGE = "showEditPage";
     private static final String ACTION_HOME_PAGE = "showHomePage";
     private static final String ACTION_EDIT = "edit";
-    private static final String ACTION_DELETE="delete";
-    private static final String ACTION_ADD="add";
-    private static final String AJAX_LIST_ACTION = "listAjax";
-    private static final String AJAX_DELETE_ACTION = "deleteAjax";
-    private static final String AJAX_FINDBY_ID = "findByIdAjax";
+    private static final String ACTION_DELETE = "delete";
+    private static final String ACTION_ADD = "add";
+    private static final String ACTION_LIST_AJAX = "listAjax";
+    private static final String ACTION_DELETE_AJAX = "deleteAjax";
+    private static final String ACTION_EDIT_PAGE_AJAX = "findByIdAjax";
+    private static final String ACTION_ADD_AJAX = "addAjax";
+    private static final String ACTION_EDIT_AJAX = "editAjax";
     
     // PAGE URL constants
     private static final String PAGE_LIST = "/list-manufacturers.jsp";
@@ -93,7 +95,8 @@ public class ManufacturerController extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         String action = request.getParameter(PARAM_ACTION);
-        
+     //   String action = ACTION_ADD_AJAX ;
+                
         String destination = "";
         int manufacturerId;
         
@@ -176,7 +179,7 @@ public class ManufacturerController extends HttpServlet {
                     destination = PAGE_MANAGE;
                     break;
                     
-                case AJAX_DELETE_ACTION :
+                case ACTION_DELETE_AJAX :
                     manufacturerId = getParameterManufacturerId(request);
                     if(manufacturerId != -1){
                         Manufacturer deleteManufacturer = manufacturerService.findById(Integer.toString(manufacturerId));
@@ -184,20 +187,12 @@ public class ManufacturerController extends HttpServlet {
                     }
                     return; // must not continue at bottom!    
                     
-                case  AJAX_LIST_ACTION :
+                case  ACTION_LIST_AJAX :
                     List<Manufacturer> manufacturers = manufacturerService.findAll();
                     JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
                     for(Manufacturer m: manufacturers ){
                         jsonArrayBuilder.add(
-                                Json.createObjectBuilder()
-                                .add(PARAM_MANUFACTURERID, m.getManufacturerId().toString())
-                                .add(PARAM_MANUFACTURER_NAME, m.getManufacturerName())
-                                .add(PARAM_ADDRESS1, m.getAddress1())
-                                .add(PARAM_ADDRESS2, m.getAddress2())
-                                .add(PARAM_CITY, m.getCity())
-                                .add(PARAM_STATE, m.getState())
-                                .add(PARAM_ZIPCODE, m.getZipcode())
-                                .add(PARAM_PHONE, m.getPhone())
+                            getJsonObjectBuilder(m)
                         );
                     }
                     JsonArray manufacturersJson = jsonArrayBuilder.build();
@@ -206,25 +201,65 @@ public class ManufacturerController extends HttpServlet {
                     out.flush();
                     return; // must not continue at bottom!
               
-                case AJAX_FINDBY_ID :
+                case ACTION_EDIT_PAGE_AJAX :
                     manufacturerId = getParameterManufacturerId(request);
                     if(manufacturerId != -1){
                         Manufacturer foundManufacturer = manufacturerService.findById(Integer.toString(manufacturerId));
-                        JsonObjectBuilder builder = Json.createObjectBuilder()
-                                .add(PARAM_MANUFACTURERID, foundManufacturer.getManufacturerId().toString())
-                                .add(PARAM_MANUFACTURER_NAME, foundManufacturer.getManufacturerName())
-                                .add(PARAM_ADDRESS1, foundManufacturer.getAddress1())
-                                .add(PARAM_ADDRESS2, foundManufacturer.getAddress2())
-                                .add(PARAM_CITY, foundManufacturer.getCity())
-                                .add(PARAM_STATE, foundManufacturer.getState())
-                                .add(PARAM_ZIPCODE, foundManufacturer.getZipcode())
-                                .add(PARAM_PHONE, foundManufacturer.getPhone());
+                        JsonObjectBuilder builder = getJsonObjectBuilder(foundManufacturer);
                         JsonObject manufacturerJson = builder.build();
                         response.setContentType("application/json");
                         out.write(manufacturerJson.toString());
                         out.flush();  
                     }
                     return; // must not continue at bottom!
+                
+                case ACTION_ADD_AJAX :
+                case ACTION_EDIT_AJAX:
+                    StringBuilder sb = new StringBuilder();
+                    BufferedReader br = request.getReader();
+                    try {
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line).append('\n');
+                        }
+                    } finally {
+
+                        br.close();
+                    }
+
+                    String jsonPayload = sb.toString();
+                    JsonReader reader = Json.createReader(new StringReader(jsonPayload));
+                    JsonObject formData = reader.readObject();
+                    String tempId = formData.getString("manufacturerId");
+                    manufacturerId = Integer.parseInt(tempId);
+                    if(manufacturerId == -1){
+                        Manufacturer newManufacturer = new Manufacturer(0);
+                       
+                        newManufacturer.setManufacturerName(formData.getString("manufacturerName"));
+                        newManufacturer.setAddress1(formData.getString("address1"));
+                        newManufacturer.setAddress2(formData.getString("address2"));
+                        newManufacturer.setCity(formData.getString("city"));
+                        newManufacturer.setState(formData.getString("state"));
+                        newManufacturer.setZipcode(formData.getString("zipcode"));
+                        newManufacturer.setPhone(formData.getString("phone"));
+                       
+                        manufacturerService.edit(newManufacturer);
+                        
+                    }
+                    else{
+                        Manufacturer editManufacturer = manufacturerService.findById(tempId);
+                       
+                        editManufacturer.setManufacturerName(formData.getString("manufacturerName"));
+                        editManufacturer.setAddress1(formData.getString("address1"));
+                        editManufacturer.setAddress2(formData.getString("address2"));
+                        editManufacturer.setCity(formData.getString("city"));
+                        editManufacturer.setState(formData.getString("state"));
+                        editManufacturer.setZipcode(formData.getString("zipcode"));
+                        editManufacturer.setPhone(formData.getString("phone"));
+                        manufacturerService.edit(editManufacturer);
+                    }
+                    return;
+                    
                 
             }
             
@@ -239,6 +274,20 @@ public class ManufacturerController extends HttpServlet {
         
     
      
+    }
+    
+    private  JsonObjectBuilder getJsonObjectBuilder(Manufacturer manufacturer){
+        JsonObjectBuilder builder = Json.createObjectBuilder()
+                                .add(PARAM_MANUFACTURERID, manufacturer.getManufacturerId().toString())
+                                .add(PARAM_MANUFACTURER_NAME, manufacturer.getManufacturerName())
+                                .add(PARAM_ADDRESS1, manufacturer.getAddress1())
+                                .add(PARAM_ADDRESS2, manufacturer.getAddress2())
+                                .add(PARAM_CITY, manufacturer.getCity())
+                                .add(PARAM_STATE, manufacturer.getState())
+                                .add(PARAM_ZIPCODE, manufacturer.getZipcode())
+                                .add(PARAM_PHONE, manufacturer.getPhone());
+        
+        return builder;
     }
     
     private int getParameterManufacturerId(HttpServletRequest request) {
@@ -295,3 +344,12 @@ public class ManufacturerController extends HttpServlet {
     }// </editor-fold>
 
 }
+/*Json.createObjectBuilder()
+                                .add(PARAM_MANUFACTURERID, m.getManufacturerId().toString())
+                                .add(PARAM_MANUFACTURER_NAME, m.getManufacturerName())
+                                .add(PARAM_ADDRESS1, m.getAddress1())
+                                .add(PARAM_ADDRESS2, m.getAddress2())
+                                .add(PARAM_CITY, m.getCity())
+                                .add(PARAM_STATE, m.getState())
+                                .add(PARAM_ZIPCODE, m.getZipcode())
+                                .add(PARAM_PHONE, m.getPhone() */

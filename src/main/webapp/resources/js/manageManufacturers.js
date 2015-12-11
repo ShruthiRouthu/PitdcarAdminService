@@ -7,6 +7,7 @@
         
         var $document = $(document);
         var $body = $('body');
+        var $tableDiv = $("#tableDiv");
         var $table = $('table');
         var $tableBody = $('#tableBody');
         var $addEditDiv = $('#addEditDiv');
@@ -14,7 +15,8 @@
        
         
         hideAddForm();    
-        findAllManufacturers();     
+        findAllManufacturers();  
+        //  showAddForm();
        
         function findAllManufacturers() {
             alert('Finding Manufacturers');
@@ -34,30 +36,31 @@
         
         function displayManufacturers(manufacturers) {
             alert("Displaying manufacturers");
+            $tableDiv.show();
             $('tbody tr').remove(); //to avoid duplicate entries
             $.each(manufacturers, function (index, manufacturer) {
                 var row = '<tr class="manufacturerListRow">' +
-                        '<td>' + manufacturer.manufacturerId + '</td>' +
-                        '<td>' + manufacturer.manufacturerName + '</td>' +
-                        '<td>' + manufacturer.address1 + '</td>' +
-                        '<td>' + manufacturer.address2 + '</td>' +
-                        '<td>' + manufacturer.city + '</td>' +
-                        '<td>' + manufacturer.state + '</td>' +
-                        '<td>' + manufacturer.zipcode + '</td>' +
-                        '<td>' + manufacturer.phone + '</td>' +
-                        '<td>' + '<button class="editBtn" value="' + manufacturer.manufacturerId + '">edit</button></td>' +
-                        '<td>' + '<button class="deleteBtn" value="' + manufacturer.manufacturerId + '">delete</button></td>' +
+                        '<td align="center">' + manufacturer.manufacturerId + '</td>' +
+                        '<td align="left">' + manufacturer.manufacturerName + '</td>' +
+                        '<td align="left">' + manufacturer.address1 + '</td>' +
+                        '<td align="left">' + manufacturer.address2 + '</td>' +
+                        '<td align="left" >' + manufacturer.city + '</td>' +
+                        '<td align="center">' + manufacturer.state + '</td>' +
+                        '<td align="center">' + manufacturer.zipcode + '</td>' +
+                        '<td align="center">' + manufacturer.phone + '</td>' +
+                        '<td align="center">' + '<button id="editBtn"  class="btn btn-default" value="' + manufacturer.manufacturerId + '"><span class="glyphicon glyphicon-pencil" aria-hidden="true" ></span></button></td>' +
+                        '<td align="center">' + '<button id="deleteBtn" class="btn btn-default" value="' + manufacturer.manufacturerId + '"><span class="glyphicon glyphicon-trash" aria-hidden="true" ></span></button></td>' +
                         '</tr>';
                 $tableBody.append(row);
             });
             if(!addButton){             
-                $table.append('<br><button id="showAddFormBtn">Add Manufacturer</button></td></tr>'); 
+                $tableDiv.append('<br><button id="showAddFormBtn" class="btn btn-primary">Add New</button></td></tr>'); 
                 addButton = true;           
             }
         }
    
         // Delete event
-        $tableBody.on('click', '.deleteBtn', function(){
+        $tableBody.on('click', '#deleteBtn', function(){
             var clickedManufacturer = $(this).val();
             alert('click working ' + clickedManufacturer);
             $.ajax({
@@ -78,7 +81,7 @@
             $addEditDiv.hide();
         }
         
-        $table.on('click' ,'#showAddFormBtn',function(){
+        $tableDiv.on('click' ,'#showAddFormBtn',function(){
             alert("Click working");
             showAddForm();
         });
@@ -95,14 +98,16 @@
             $('#manufacturerId').val(0);
             $('#manufacturerId').hide();
             $addEditDiv.show();
+            $tableDiv.hide();
+            
         }
       
-        $tableBody.on('click', '.editBtn', function(){
+        $tableBody.on('click', '#editBtn', function(){
             alert('edit click working');
             var clickedManufacturerId = $(this).val();
             $.ajax({
                 type: 'GET',
-                url: controllerName + "?action=findByIdAjax&manufacturerId=" + clickedManufacturer ,
+                url: controllerName + "?action=findByIdAjax&manufacturerId=" + clickedManufacturerId ,
                 dataType: 'json',
                 success: showEditForm
             });
@@ -121,17 +126,18 @@
            $('#zipcode').val(manufacturer.zipcode);
            $('#phone').val(manufacturer.phone);
            $addEditDiv.show();
+           $tableDiv.hide();
         }
         
         $addEditDiv.on('click', '#addManufacturer', function () {
             alert("Save manufacturer click working");
             var clickedManufacturerId = $('#manufacturerId').val();
-            if(clickedManufacturerId === 0){
+            if(clickedManufacturerId == 0){
                 alert("its add");
                 $.ajax({
                     type: 'POST',
                     contentType: 'application/json',
-                    url: controllerName + "manufacturers",
+                    url: controllerName + "?action=addAjax",
                     dataType: "json",
                     data: formToJSON(),
                     success: function (data, textStatus, jqXHR) {
@@ -156,9 +162,9 @@
             else{
                 alert("its edit url : " +controllerName + "manufacturers/" + clickedManufacturerId );
                 $.ajax({
-                    type: 'GET',
+                    type: 'POST',
                     contentType: 'application/json',
-                    url: controllerName + "manufacturers/" + clickedManufacturerId ,
+                    url: controllerName + "?action=editAjax" ,
                     dataType: "html",
                     data: formToJSONEdit(),
                     success: function (data, textStatus, jqXHR) {
@@ -176,6 +182,7 @@
         // Helper functions to serialize all the form fields into a JSON string
         function formToJSON() {
             return JSON.stringify({
+                "manufacturerId": "-1",
                 "manufacturerName": $('#manufacturerName').val(),
                 "address1": $('#address1').val() ,  
                 "address2": $('#address2').val() , 

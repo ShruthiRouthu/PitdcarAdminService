@@ -19,24 +19,27 @@
     </head>
     <body class="manufacturerList">
         
-        <h1 style="text-align:center">Manufacturer List</h1>
+        
         
         <sec:authorize access="hasAnyRole('ROLE_MGR')">
             
-            <div class="table-responsive" style="margin: 25px">
+            <div id="tableDiv" class="table-responsive" style="margin: 25px">
+                
+                <h1 style="text-align:center">Manufacturer List</h1><br>
+                
                 <table class="table table-striped table-bordered">
                     <thead>
                         <tr style="background-color: #1E90FF; color:FFFFF0;">               
-                            <th align="left" >ID</th> 
-                            <th align="left" >Name</th>
-                            <th align="left" >Street Address1 </th>
-                            <th align="left" >Street Address2</th>
-                            <th align="left" >City</th>
-                            <th align="left" >State</th>
-                            <th align="left" >Zip</th>
-                            <th align="left" >Phone</th>
-                            <th align="center" >Edit</th>
-                            <th align="center" >Delete</th>
+                            <th style="text-align:center" >ID</th> 
+                            <th style="text-align:left" >Name</th>
+                            <th style="text-align:left" >Street Address1 </th>
+                            <th style="text-align:left" >Street Address2</th>
+                            <th style="text-align:left" >City</th>
+                            <th style="text-align:center" >State</th>
+                            <th style="text-align:center" >Zip</th>
+                            <th style="text-align:center" >Phone</th>
+                            <th style="text-align:center" >Edit</th>
+                            <th style="text-align:center" >Delete</th>
                         </tr>
                     </thead>
                     
@@ -47,7 +50,9 @@
                   
             </div>     
  
-            <div id="addEditDiv" >
+            <div id="addEditDiv" style="margin: 25px" >
+                
+                <h1 style="text-align:center">Add/Edit Manufacturer</h1><br>
 
                     <input class="form-control" id="manufacturerId"  name="manufacturerId" type="text" value="" >        
                    
@@ -93,9 +98,12 @@
         </sec:authorize>
             
         <br>
+        
         <sec:authorize access="hasAnyRole('ROLE_MGR','ROLE_USER')">
-            Logged in as: <sec:authentication property="principal.username"></sec:authentication> <br>
-            <a href='<%= this.getServletContext().getContextPath() + "/j_spring_security_logout"%>'>Log Me Out</a>
+            <div style="margin: 25px">
+                <sec:authentication property="principal.username"></sec:authentication> 
+                <a  href='<%= this.getServletContext().getContextPath() + "/j_spring_security_logout"%>'> : Log Out</a>
+            </div>
         </sec:authorize>
             
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" type="text/javascript"></script>    
