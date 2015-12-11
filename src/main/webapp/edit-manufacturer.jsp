@@ -39,7 +39,8 @@
 
                <div class="form-group">
                 <label for="manufacturerName">Name:  </label>
-                <input  class="form-control" id="manufacturerName" name="manufacturerName" type="text" value="${selectedManufacturer.manufacturerName}" required>
+                <input  class="form-control" id="manufacturerName" name="manufacturerName" type="text" 
+                        value="${selectedManufacturer.manufacturerName}" required>
                </div>
 
                <div class="form-group">
@@ -70,7 +71,7 @@
 
                <div class="form-group">
                 <label for="phone">Phone:  </label>
-                <input  class="form-control" id="phone" name="phone" type="text" value="${selectedManufacturer.phone}" required>
+                <input  class="form-control" id="phone" name="phone" type="tel" value="${selectedManufacturer.phone}" required>
                </div>
 
                <button type="submit" class="btn btn-primary">Save changes</button>
@@ -79,7 +80,8 @@
            </sec:authorize>  
         
         </form> 
-          
+        
+
         <br><br>    
              
         <sec:authorize access="hasAnyRole('ROLE_MGR','ROLE_USER')">
@@ -88,6 +90,22 @@
         </sec:authorize>     
         
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
+        <script src="http://cdn.jsdelivr.net/jquery.validation/1.14.0/jquery.validate.min.js"></script>
+        <script src="http://cdn.jsdelivr.net/jquery.validation/1.14.0/additional-methods.min.js"></script>
+     <!--   <script src="resources/js/formValidation.js" type="text/javascript"></script> -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">  </script>
+        <script>
+            $("#editForm").validate({
+            rules: {
+                zipcode: {
+                    zipcodeUS: true
+                },
+                phone: {
+                    phoneUS: true
+                }
+            }
+
+           });
+        </script>
     </body>
 </html>
