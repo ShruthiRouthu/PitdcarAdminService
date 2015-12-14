@@ -3,11 +3,8 @@
  
         $("#editForm").validate({
             rules: {
-                zipcode: {
-                    zipcodeUS: true
-                },
-                phone: {
-                    phoneUS: true
+                partImage: {
+                    url: true
                 }
             }
 
@@ -17,3 +14,4 @@
     });
     
 }(window.jQuery, window, document));
+

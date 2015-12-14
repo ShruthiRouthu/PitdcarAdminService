@@ -230,18 +230,18 @@ public class ManufacturerController extends HttpServlet {
                     String jsonPayload = sb.toString();
                     JsonReader reader = Json.createReader(new StringReader(jsonPayload));
                     JsonObject formData = reader.readObject();
-                    String tempId = formData.getString("manufacturerId");
+                    String tempId = formData.getString(PARAM_MANUFACTURERID);
                     manufacturerId = Integer.parseInt(tempId);
                     if(manufacturerId == -1){
                         Manufacturer newManufacturer = new Manufacturer(0);
                        
-                        newManufacturer.setManufacturerName(formData.getString("manufacturerName"));
-                        newManufacturer.setAddress1(formData.getString("address1"));
-                        newManufacturer.setAddress2(formData.getString("address2"));
-                        newManufacturer.setCity(formData.getString("city"));
-                        newManufacturer.setState(formData.getString("state"));
-                        newManufacturer.setZipcode(formData.getString("zipcode"));
-                        newManufacturer.setPhone(formData.getString("phone"));
+                        newManufacturer.setManufacturerName(formData.getString(PARAM_MANUFACTURER_NAME));
+                        newManufacturer.setAddress1(formData.getString(PARAM_ADDRESS1));
+                        newManufacturer.setAddress2(formData.getString(PARAM_ADDRESS2));
+                        newManufacturer.setCity(formData.getString(PARAM_CITY));
+                        newManufacturer.setState(formData.getString(PARAM_STATE));
+                        newManufacturer.setZipcode(formData.getString(PARAM_ZIPCODE));
+                        newManufacturer.setPhone(formData.getString(PARAM_PHONE));
                        
                         manufacturerService.edit(newManufacturer);
                         
@@ -249,13 +249,13 @@ public class ManufacturerController extends HttpServlet {
                     else{
                         Manufacturer editManufacturer = manufacturerService.findById(tempId);
                        
-                        editManufacturer.setManufacturerName(formData.getString("manufacturerName"));
-                        editManufacturer.setAddress1(formData.getString("address1"));
-                        editManufacturer.setAddress2(formData.getString("address2"));
-                        editManufacturer.setCity(formData.getString("city"));
-                        editManufacturer.setState(formData.getString("state"));
-                        editManufacturer.setZipcode(formData.getString("zipcode"));
-                        editManufacturer.setPhone(formData.getString("phone"));
+                        editManufacturer.setManufacturerName(formData.getString(PARAM_MANUFACTURER_NAME));
+                        editManufacturer.setAddress1(formData.getString(PARAM_ADDRESS1));
+                        editManufacturer.setAddress2(formData.getString(PARAM_ADDRESS2));
+                        editManufacturer.setCity(formData.getString(PARAM_CITY));
+                        editManufacturer.setState(formData.getString(PARAM_STATE));
+                        editManufacturer.setZipcode(formData.getString(PARAM_ZIPCODE));
+                        editManufacturer.setPhone(formData.getString(PARAM_PHONE));
                         manufacturerService.edit(editManufacturer);
                     }
                     return;
@@ -344,12 +344,3 @@ public class ManufacturerController extends HttpServlet {
     }// </editor-fold>
 
 }
-/*Json.createObjectBuilder()
-                                .add(PARAM_MANUFACTURERID, m.getManufacturerId().toString())
-                                .add(PARAM_MANUFACTURER_NAME, m.getManufacturerName())
-                                .add(PARAM_ADDRESS1, m.getAddress1())
-                                .add(PARAM_ADDRESS2, m.getAddress2())
-                                .add(PARAM_CITY, m.getCity())
-                                .add(PARAM_STATE, m.getState())
-                                .add(PARAM_ZIPCODE, m.getZipcode())
-                                .add(PARAM_PHONE, m.getPhone() */

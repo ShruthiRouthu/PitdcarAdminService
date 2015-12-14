@@ -78,8 +78,7 @@ public class PartController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         
         /*
-            This is how you inject a Spring service object into your servlet. Note
-            that the bean name must match the name in your service class.
+           Injecting a service objects into  servlet.
         */
         ServletContext sctx = getServletContext();
         WebApplicationContext ctx
@@ -87,8 +86,6 @@ public class PartController extends HttpServlet {
         PartService partService = (PartService) ctx.getBean("partService");
         ManufacturerService manufacturerService = (ManufacturerService) ctx.getBean("manufacturerService");
        
-//        HttpSession session = request.getSession();
-//        ServletContext context = request.getServletContext();
       
         String destination = "";
         int partId;

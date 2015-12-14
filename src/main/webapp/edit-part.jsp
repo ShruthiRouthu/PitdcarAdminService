@@ -79,7 +79,7 @@
 
                <div class="form-group">
                 <label for="partImage">Image URL:  </label>
-                <input  class="form-control" id="partImage" name="partImage" type="text" value="${selectedPart.partImage}" required>
+                <input  class="form-control" id="partImage" name="partImage" type="url" value="${selectedPart.partImage}" required>
                </div>
 
                <div class="form-group">
@@ -107,6 +107,9 @@
         </sec:authorize>   
         
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"> </script>
+        <script src="http://cdn.jsdelivr.net/jquery.validation/1.14.0/jquery.validate.min.js"></script>
+        <script src="http://cdn.jsdelivr.net/jquery.validation/1.14.0/additional-methods.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">  </script>
+        <script src="resources/js/partFormValidation.js" type="text/javascript"></script>
     </body>
 </html>

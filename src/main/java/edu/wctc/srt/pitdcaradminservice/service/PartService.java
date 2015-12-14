@@ -33,7 +33,7 @@ public class PartService {
         return partRepo.findAll();
     }
     
-    public Part findById(String id) {
+    public  Part findById(String id) {
         return partRepo.findOne(new Integer(id));
     }
     
@@ -44,7 +44,7 @@ public class PartService {
     }
 
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
-    public Part edit(Part part) {
+    public  Part edit(Part part) {
         return partRepo.saveAndFlush(part);
     }
     

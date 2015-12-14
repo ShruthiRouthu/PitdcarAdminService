@@ -88,13 +88,12 @@
 
                     <div class="form-group">
                         <label for="phone">Phone:  </label>
-                        <input  class="form-control" id="phone" name="phone" type="text" value="${selectedManufacturer.phone}" required>
+                        <input  class="form-control" id="phone" name="phone" type="tel" value="${selectedManufacturer.phone}" required>
                     </div>
 
                     <button type="submit" id="addManufacturer" class="btn btn-primary">Save </button>
            
             </div>
-                    
         </sec:authorize>
             
         <br>
@@ -107,6 +106,7 @@
         </sec:authorize>
             
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" type="text/javascript"></script>    
-        <script src="resources/js/manageManufacturers.js" type="text/javascript"></script>    
+        <script src="resources/js/manageManufacturers.js" type="text/javascript"></script>
+    
     </body>
 </html>

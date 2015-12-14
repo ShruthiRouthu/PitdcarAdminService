@@ -69,7 +69,7 @@ public class Manufacturer implements Serializable {
     public Manufacturer() {
     }
 
-    public Manufacturer(Integer manufacturerId) {
+    public  Manufacturer(Integer manufacturerId) {
         this.manufacturerId = manufacturerId;
     }
 

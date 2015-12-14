@@ -31,7 +31,7 @@ public class ManufacturerService {
         return ManufacturerRepo.findAll();
     }
 
-    public Manufacturer findById(String id) {
+    public  Manufacturer findById(String id) {
         return ManufacturerRepo.findOne(new Integer(id));
     }
 
